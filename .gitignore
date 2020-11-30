@@ -1,3 +1,4 @@
 # Untrack folders
 
 node_modules/
+.env
