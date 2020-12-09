@@ -11,7 +11,8 @@ const users = [{name: 'Belle', password: '123'}];
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
-db.sync({ force: true });
+// TODO create a seed file for this function. 
+// db.sync({ force: true });
 
 app.get('/', (req, res) => {
     queries.getUsers().then(users => {
@@ -24,7 +25,7 @@ app.get('/users', async (req, res) => {
     const users = await queries.getUsers();
     res.json({ users });
     // must use try catch block to get errors when using async await functions
-    
+
 })
 
 
@@ -52,8 +53,10 @@ app.post('/users', async (req, res) => {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         console.log('hashedpass', hashedPassword)
-        const user = { name: req.body.name, password: hashedPassword };
+        const user = { username: req.body.name, password: hashedPassword, email: req.body.email };
         users.push(user);
+        const createdUser = await queries.createUser(user);
+        console.log(createdUser);
         res.status(201).send('success user creation');
     } catch (err) {
         console.log(err);
