@@ -4,20 +4,28 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 require('dotenv').config({path: path.resolve(__dirname+'/.env')});
 const queries = require('./queries')
+const db = require('./database');
 
 const users = [{name: 'Belle', password: '123'}];
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
- 
+
+db.sync({ force: true });
+
 app.get('/', (req, res) => {
- res.send({working: true})
- queries.authenticate();
+    queries.getUsers().then(users => {
+        res.json({ users });
+    });
+    // res.send({working: true})
 })
 
-app.get('/users', (req, res) => {
-    res.json(users);
-   })
+app.get('/users', async (req, res) => {
+    const users = await queries.getUsers();
+    res.json({ users });
+    // must use try catch block to get errors when using async await functions
+    
+})
 
 
 // user login
