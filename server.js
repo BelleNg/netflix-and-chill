@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 // TODO create a seed file for this function. 
-// db.sync({ force: true });
+db.sync({ force: true });
 
 app.get('/', (req, res) => {
     queries.getUsers().then(users => {
@@ -50,11 +50,11 @@ app.post('/users/login/', async (req, res) => {
 // creation of user
 app.post('/users', async (req, res) => {
     try {
+        // check if user exists in system, if does not, proceed. 
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         console.log('hashedpass', hashedPassword)
         const user = { username: req.body.name, password: hashedPassword, email: req.body.email };
-        users.push(user);
         const createdUser = await queries.createUser(user);
         console.log(createdUser);
         res.status(201).send('success user creation');
