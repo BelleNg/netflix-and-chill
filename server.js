@@ -31,12 +31,12 @@ app.get('/users', async (req, res) => {
 
 // user login
 app.post('/users/login/', async (req, res) => {
-    const user = users.find(user => user.name === req.body.name)
+    const user = await queries.getEmail(req.body.email);
     if (user == null) {
         return res.status(400).send('Cannot find user')
     }
     try {
-        if (await bcrypt.compare(req.body.password, user.password)) {
+        if (await bcrypt.compare(req.body.password, user.dataValues.password)) {
             res.send('Successly logged in')
         } else {
             res.send('Wrong username or password')
@@ -49,18 +49,21 @@ app.post('/users/login/', async (req, res) => {
 
 // creation of user
 app.post('/users', async (req, res) => {
-    try {
-        // check if user exists in system, if does not, proceed. 
+    const uniqueEmail = await queries.getEmail(req.body.email);
+    if (uniqueEmail) {
+        return res.status(500).send('email is already in system');
+    }
+    try { 
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        console.log('hashedpass', hashedPassword)
+        // console.log('hashedpass', hashedPassword)
         const user = { username: req.body.name, password: hashedPassword, email: req.body.email };
         const createdUser = await queries.createUser(user);
-        console.log(createdUser);
+        // console.log(createdUser);
         res.status(201).send('success user creation');
     } catch (err) {
-        console.log(err);
-        res.status(500).send('user cannot be created');
+        // console.log(err);
+        res.status(500).send('user was not created');
     }
 })
 

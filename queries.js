@@ -27,20 +27,19 @@ function getUsers() {
 };
 
 // checks if user email is unique
-function checkEmail(email) {
-    return User.find({ 
+function getEmail(email) {
+    return User.findOne({ 
         where: {
         email: email
         }
       })
         .then(user => {
-            console.log(user)
-            return users;
+            return user; //if email not in system, returns null
         })
         .catch(err => {
             console.log(err);
             // TODO change error to proper error
-            return "error"; 
+            return "error in getEmail"; 
         });     
 };
 
@@ -48,14 +47,14 @@ function checkEmail(email) {
 function createUser({ username, password, email }) {
     return User.create({ username: username, password: password, email: email})
     .then(user => {
-        console.log("User's auto-generated ID:", user.id);
+        // console.log("User's auto-generated ID:", user.id);
         return user;
     })
     .catch(err => {
         console.log(err);
         // TODO change error to proper error
-        return "error"; 
+        return "error in createUser"; 
     });
 }
 
-module.exports = { authenticate, getUsers, checkEmail, createUser};
+module.exports = { authenticate, getUsers, getEmail, createUser};
