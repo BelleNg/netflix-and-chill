@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 // TODO create a seed file for this function. 
-db.sync({ force: true });
+// db.sync({ force: true });
 
 app.get('/', (req, res) => {
     queries.getUsers().then(users => {
