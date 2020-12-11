@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('./database.js');
 const User = require('./models/User');
 const Movie = require('./models/Movie');
+const Genre = require('./models/Genre');
 
 function authenticate() {
     db
