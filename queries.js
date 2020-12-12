@@ -59,4 +59,20 @@ function createUser({ username, password, email }) {
     });
 }
 
-module.exports = { authenticate, getUsers, getEmail, createUser};
+// delete user in Users table
+function deleteUser(email) {
+    return User.destroy({
+        where: { 
+            email: email,
+        }
+    }).then( (result) => {
+        return result;
+    })
+    .catch(err => {
+        console.log("error in deleteUser",err);
+        // TODO change error to proper error
+        return "error in deleteUser";
+    });
+}
+
+module.exports = { authenticate, getUsers, getEmail, createUser, deleteUser};

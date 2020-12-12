@@ -61,11 +61,23 @@ app.post('/users', async (req, res) => {
         const createdUser = await queries.createUser(user);
         // console.log(createdUser);
         res.status(201).send('success user creation');
-    } catch (err) {
+    } catch(err) {
         // console.log(err);
         res.status(500).send('user was not created');
     }
 })
+
+// delete user forever
+// TODO - name better rest APIs
+app.post('/users/delete', async (req, res) => {
+    try {
+        await queries.deleteUser(req.body.email);
+        res.status(201).send('user deleted')
+    } catch(err) {
+        res.status(500).send('user was not created');
+    }
+})
+
 
 app.listen(process.env.PORT, () => {
     console.log(`Example app listening at http://localhost:${process.env.PORT}`)
