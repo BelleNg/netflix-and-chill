@@ -59,6 +59,27 @@ function createUser({ username, password, email }) {
     });
 }
 
+// update username
+function updateUsername(oldUsername,newUsername) {
+    return User.update({ username: newUsername},{
+        where: {
+            username: oldUsername
+        }
+    })
+    .then( user => {
+        return user;
+    })
+    .catch(err => {
+        console.log(err);
+        // TODO change error to proper error
+        return "error in updateUsername"; 
+    });
+}
+
+// TODO create queries for
+// update email
+// update password
+
 // delete user in Users table
 function deleteUser(email) {
     return User.destroy({
@@ -75,4 +96,4 @@ function deleteUser(email) {
     });
 }
 
-module.exports = { authenticate, getUsers, getEmail, createUser, deleteUser};
+module.exports = { authenticate, getUsers, getEmail, createUser, deleteUser, updateUsername};

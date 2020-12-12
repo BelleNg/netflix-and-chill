@@ -67,8 +67,18 @@ app.post('/users', async (req, res) => {
     }
 })
 
+// update Username
+app.put('/users/updateUsername', async (req, res) => {
+    try {
+        await queries.updateUsername(req.body.username, req.body.newUsername);
+        res.status(201).send('username changed')
+    } catch(err) {
+        res.status(500).send('username was not changed')
+    }
+})
+
 // delete user forever
-// TODO - name better rest APIs
+// TODO - name better rest APIs and check route app.delete
 app.post('/users/delete', async (req, res) => {
     try {
         await queries.deleteUser(req.body.email);
