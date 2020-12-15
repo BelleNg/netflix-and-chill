@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
+const cors = require('cors')
 const path = require('path');
 const bcrypt = require('bcrypt');
 require('dotenv').config({path: path.resolve(__dirname+'/.env')});
 const queries = require('./queries')
+require('isomorphic-fetch');
 const db = require('./database');
 
 const users = [{name: 'Belle', password: '123'}];
 
+app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
@@ -67,15 +70,15 @@ app.post('/users/signup', async (req, res) => {
     }
 })
 
-//add movies to user
-app.post('/users/:userid/movies', (req, res) => {
-    try {
-        // add movies to users 
-        res.status(201).send('user movie list successfully updated');
-    } catch(err) {
-        res.status(500).send('movies not added to user');
-    }
-})
+// TODO add movies to user
+// app.post('/users/:userid/movies', (req, res) => {
+//     try {
+//         // add movies to users 
+//         res.status(201).send('user movie list successfully updated');
+//     } catch(err) {
+//         res.status(500).send('movies not added to user');
+//     }
+// })
 
 // update Username
 app.put('/users/updateUsername', async (req, res) => {
@@ -95,6 +98,26 @@ app.post('/users/delete', async (req, res) => {
         res.status(201).send('user deleted')
     } catch(err) {
         res.status(500).send('user was not created');
+    }
+})
+
+//GET MOVIES FROM TMDB
+
+app.get('/movies', (req, res) => {
+    try {
+        fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`)
+        .then(function(response) {
+            if (response.status >= 400) {
+                throw new Error("Bad response from server");
+            }
+            return response.json();
+        })
+        .then(function(stories) {
+            console.log(stories);
+            res.send(stories);
+        });
+    } catch (err) {
+        res.status(500).send("cannot get movies");
     }
 })
 
