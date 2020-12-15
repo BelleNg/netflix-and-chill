@@ -49,7 +49,7 @@ function getEmail(email) {
 function createUser({ username, password, email }) {
     return User.create({ username: username, password: password, email: email})
     .then(user => {
-        // console.log("User's auto-generated ID:", user.id);
+        console.log("User's auto-generated ID:", user.id);
         return user;
     })
     .catch(err => {
@@ -58,6 +58,11 @@ function createUser({ username, password, email }) {
         return "error in createUser"; 
     });
 }
+
+// TODO add movie to user list
+// function insertUserMovies() {
+//     // add movie - user connection in users_movies table.
+// }
 
 // update username
 function updateUsername(oldUsername,newUsername) {

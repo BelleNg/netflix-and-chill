@@ -30,7 +30,7 @@ app.get('/users', async (req, res) => {
 
 
 // user login
-app.post('/users/login/', async (req, res) => {
+app.post('/users/login', async (req, res) => {
     const user = await queries.getEmail(req.body.email);
     if (user == null) {
         return res.status(400).send('Cannot find user')
@@ -48,7 +48,7 @@ app.post('/users/login/', async (req, res) => {
 })
 
 // creation of user
-app.post('/users', async (req, res) => {
+app.post('/users/signup', async (req, res) => {
     const uniqueEmail = await queries.getEmail(req.body.email);
     if (uniqueEmail) {
         return res.status(500).send('email is already in system');
@@ -57,13 +57,23 @@ app.post('/users', async (req, res) => {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         // console.log('hashedpass', hashedPassword)
-        const user = { username: req.body.name, password: hashedPassword, email: req.body.email };
-        const createdUser = await queries.createUser(user);
+        const user = { username: req.body.username, password: hashedPassword, email: req.body.email };
+        await queries.createUser(user);
         // console.log(createdUser);
         res.status(201).send('success user creation');
     } catch(err) {
         // console.log(err);
         res.status(500).send('user was not created');
+    }
+})
+
+//add movies to user
+app.post('/users/:userid/movies', (req, res) => {
+    try {
+        // add movies to users 
+        res.status(201).send('user movie list successfully updated');
+    } catch(err) {
+        res.status(500).send('movies not added to user');
     }
 })
 
