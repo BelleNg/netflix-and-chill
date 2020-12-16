@@ -52,11 +52,11 @@ app.post('/users/login', async (req, res) => {
 
 // creation of user
 app.post('/users/signup', async (req, res) => {
-    const uniqueEmail = await queries.getEmail(req.body.email);
-    if (uniqueEmail) {
-        return res.status(500).send('email is already in system');
-    }
     try { 
+        const uniqueEmail = await queries.getEmail(req.body.email);
+        if (uniqueEmail) {
+            return res.status(500).send('email is already in system');
+        }
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         // console.log('hashedpass', hashedPassword)

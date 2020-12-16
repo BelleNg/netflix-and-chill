@@ -15,48 +15,45 @@ function authenticate() {
     });
 };
 
-function getUsers() {
-    return User.findAll({attributes: ['username', 'password', 'email']})
-        .then(users => {
-            console.log(users)
-            return users;
-        })
-        .catch(err => {
-            console.log(err);
-            // TODO change error to proper error
-            return "error"; 
-        });     
-};
+async function getUsers() {
+    try {
+        const users = await User.findAll({
+            attributes: ['username', 'password', 'email']
+        });
+        return users;
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database");
+    }
+}
 
 // checks if user email is unique
-function getEmail(email) {
-    return User.findOne({ 
-        where: {
-        email: email
-        }
-      })
-        .then(user => {
-            return user; //if email not in system, returns null
-        })
-        .catch(err => {
-            console.log(err);
-            // TODO change error to proper error
-            return "error in getEmail"; 
-        });     
-};
+async function getEmail(email) {
+    try {
+        const user = await User.findOne({ 
+            where: {
+            email: email
+            }
+          });
+        return user;
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database");
+    }
+}
 
 // create user in Users table
-function createUser({ username, password, email }) {
-    return User.create({ username: username, password: password, email: email})
-    .then(user => {
-        console.log("User's auto-generated ID:", user.id);
-        return user;
-    })
-    .catch(err => {
+async function createUser({ username, password, email }) {
+    try {
+        await User.create({ 
+            username: username, 
+            password: password, 
+            email: email
+        });
+    } catch (err) {
         console.log(err);
-        // TODO change error to proper error
-        return "error in createUser"; 
-    });
+        throw new Error("error in database")
+    }
 }
 
 // TODO add movie to user list
@@ -65,20 +62,18 @@ function createUser({ username, password, email }) {
 // }
 
 // update username
-function updateUsername(oldUsername,newUsername) {
-    return User.update({ username: newUsername},{
-        where: {
-            username: oldUsername
-        }
-    })
-    .then( user => {
-        return user;
-    })
-    .catch(err => {
+async function updateUsername(oldUsername, newUsername) {
+    try {
+        await User.update({ username: newUsername},{
+            where: {
+                username: oldUsername
+            }
+        });
+    } catch (err) {
         console.log(err);
         // TODO change error to proper error
         return "error in updateUsername"; 
-    });
+    }
 }
 
 // TODO create queries for
@@ -115,7 +110,7 @@ async function fetchMovies() {
 }
 
 //insert movies to database
-function insertMovies(movies) {
+async function insertMovies(movies) {
     const list = movies.map( (movie) => {
         return {
             id: movie.id,
@@ -126,16 +121,14 @@ function insertMovies(movies) {
             poster_path: movie.poster_path
         }
     })
-    return Movie.bulkCreate(list, 
-        { returning: ['title'] }) // will return only the specified columns for each row inserted
-      .then((result) => {
-        return result;
-      })
-      .catch(err => {
-        console.log("error in insertMovies",err);
-        // TODO change error to proper error
-        return "error in insertMovies";
-    });
+    
+     try {
+        Movie.bulkCreate(list, 
+            { returning: ['title'] })
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database")
+    }
 }
 
 //populate database with movies
