@@ -101,23 +101,14 @@ app.post('/users/delete', async (req, res) => {
     }
 })
 
-//GET MOVIES FROM TMDB
-
-app.get('/movies', (req, res) => {
+//GET MOVIES FROM TMDB and Insert into Database
+app.get('/movies', async (req, res) => {
     try {
-        fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`)
-        .then(function(response) {
-            if (response.status >= 400) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        })
-        .then(function(stories) {
-            console.log(stories);
-            res.send(stories);
-        });
+        await queries.populateMovies();
+        res.status(201).send('Movies queried and inserted to database');
+
     } catch (err) {
-        res.status(500).send("cannot get movies");
+        res.status(500).send("cannot populate movies table");
     }
 })
 

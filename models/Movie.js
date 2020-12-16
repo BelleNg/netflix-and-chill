@@ -14,7 +14,6 @@ title: {
     },
 genre_ids: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
-    unique: true,
     allowNull: false
     }, 
 overview: {
