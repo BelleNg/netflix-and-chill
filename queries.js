@@ -71,8 +71,7 @@ async function updateUsername(oldUsername, newUsername) {
         });
     } catch (err) {
         console.log(err);
-        // TODO change error to proper error
-        return "error in updateUsername"; 
+        throw new Error("error in database")
     }
 }
 
@@ -89,9 +88,8 @@ async function deleteUser(email) {
             }
         });
     } catch (err) {
-        console.log("error in deleteUser",err);
-        // TODO change error to proper error
-        return "error in deleteUser";
+        console.log(err);
+        throw new Error("error in database")
     }
 }
 
@@ -105,7 +103,8 @@ async function fetchMovies() {
         }
         return movies.results
     } catch (err) {
-       return "error in fetchMovies", err;
+        console.log(err);
+        throw new Error("error in database")
     }
 }
 
@@ -121,7 +120,7 @@ async function insertMovies(movies) {
             poster_path: movie.poster_path
         }
     })
-    
+
      try {
         Movie.bulkCreate(list, 
             { returning: ['title'] })
@@ -133,9 +132,14 @@ async function insertMovies(movies) {
 
 //populate database with movies
 async function populateMovies() {
-    const movies = await fetchMovies();
-    const insert = await insertMovies(movies);
-    return insert;
+    try {
+        const movies = await fetchMovies();
+        const insert = await insertMovies(movies);
+
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database")
+    }
 }
 
 module.exports = { authenticate, getUsers, getEmail, createUser, deleteUser, updateUsername, populateMovies};
