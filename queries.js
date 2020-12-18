@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('./database.js');
-const User = require('./models/User');
-const Movie = require('./models/Movie');
-const Genre = require('./models/Genre');
+const { User, Movie, Genre } = require('./models');
 
 function authenticate() {
     db
@@ -56,10 +54,53 @@ async function createUser({ username, password, email }) {
     }
 }
 
+// get user from database - works
+async function getUser(userID) {
+    try {
+        const user = await User.findOne({ 
+            where: {
+            id: userID
+            }
+          });
+        return user;
+    } catch (err) {
+        console.log(err, "error in getUser");
+        throw new Error("error in database")
+    }
+}
+// find movie from database - works
+
+async function getMovie(movieID) {
+    try {
+        const movie = await Movie.findOne({ 
+            where: {
+            id: movieID
+            }
+          });
+        return movie;
+    } catch (err) {
+        console.log(err, "error in getUser");
+        throw new Error("error in database")
+    }
+}
+
 // TODO add movie to user list
-// function insertUserMovies() {
-//     // add movie - user connection in users_movies table.
-// }
+async function insertUserMovies(userID, movieNums) {
+    // add movie - user connection in users_movies table.
+    try {
+        const user = await getUser(userID);
+        console.log(user);
+        movieNums.map( async (movieID) => {
+            let movie =  await getMovie(movieID);
+            let output = await user.addMovies(movie);
+            console.log("this is userMovies", output)
+        });
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database")
+    }
+
+}
 
 // update username
 async function updateUsername(oldUsername, newUsername) {
@@ -94,6 +135,7 @@ async function deleteUser(email) {
 }
 
 //fetch movies from database
+//TODO: change pages to not hard code
 async function fetchMovies() {
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`)
@@ -134,7 +176,7 @@ async function insertMovies(movies) {
 async function populateMovies() {
     try {
         const movies = await fetchMovies();
-        const insert = await insertMovies(movies);
+        await insertMovies(movies);
 
     } catch (err) {
         console.log(err);
@@ -142,4 +184,12 @@ async function populateMovies() {
     }
 }
 
-module.exports = { authenticate, getUsers, getEmail, createUser, deleteUser, updateUsername, populateMovies};
+module.exports = { authenticate, 
+    getUsers, 
+    getEmail,
+    getMovie,
+    createUser, 
+    deleteUser, 
+    updateUsername, 
+    insertUserMovies, 
+    populateMovies};

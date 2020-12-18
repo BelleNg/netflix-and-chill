@@ -4,18 +4,12 @@ const cors = require('cors')
 const path = require('path');
 const bcrypt = require('bcrypt');
 require('dotenv').config({path: path.resolve(__dirname+'/.env')});
-const queries = require('./queries')
+const queries = require('./queries');
 require('isomorphic-fetch');
-const db = require('./database');
-
-const users = [{name: 'Belle', password: '123'}];
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
-
-// TODO create a seed file for this function. 
-// db.sync({ force: true });
 
 app.get('/', (req, res) => {
     queries.getUsers().then(users => {
@@ -30,6 +24,16 @@ app.get('/users', async (req, res) => {
     // must use try catch block to get errors when using async await functions
 
 })
+
+// app.post("/magicaltesting", async (req, res) => {
+//     try {
+//         const movie = await queries.getMovie(req.body.movieID);
+//         console.log("this is movie",movie);
+//         res.send(movie);
+//     } catch (err) {
+//         res.status(500).send('error on test', err)
+//     }
+// })
 
 
 // user login
@@ -70,15 +74,16 @@ app.post('/users/signup', async (req, res) => {
     }
 })
 
-// TODO add movies to user
-// app.post('/users/:userid/movies', (req, res) => {
-//     try {
-//         // add movies to users 
-//         res.status(201).send('user movie list successfully updated');
-//     } catch(err) {
-//         res.status(500).send('movies not added to user');
-//     }
-// })
+// TODO change movie arrays to take from req.body
+app.post('/users/:userid/movies', async (req, res) => {
+    try {
+        // add movies to users 
+        await queries.insertUserMovies(req.body.userID, [590995, 682377]);
+        res.status(201).send('user movie list successfully updated');
+    } catch(err) {
+        res.status(500).send('movies not added to user');
+    }
+})
 
 // update Username
 app.put('/users/updateUsername', async (req, res) => {
@@ -91,7 +96,7 @@ app.put('/users/updateUsername', async (req, res) => {
 })
 
 // delete user forever
-// TODO - name better rest APIs and check route app.delete
+// TODO name better rest APIs and check route app.delete
 app.post('/users/delete', async (req, res) => {
     try {
         await queries.deleteUser(req.body.email);
