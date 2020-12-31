@@ -159,56 +159,6 @@ async function deleteUser(email) {
     }
 }
 
-//fetch movies from database
-//TODO: change pages to not hard code
-async function fetchMovies() {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`)
-        const movies = await response.json();
-        if (response.status >= 400) {
-            throw new Error("Bad response from server");
-        }
-        return movies.results
-    } catch (err) {
-        console.log(err);
-        throw new Error("error in database")
-    }
-}
-
-//insert movies to database
-async function insertMovies(movies) {
-    const list = movies.map( (movie) => {
-        return {
-            id: movie.id,
-            title: movie.title,
-            genre_ids: movie. genre_ids,
-            overview: movie.overview,
-            release_date: movie.release_date,
-            poster_path: movie.poster_path
-        }
-    })
-
-     try {
-        Movie.bulkCreate(list, 
-            { returning: ['title'] })
-    } catch (err) {
-        console.log(err);
-        throw new Error("error in database")
-    }
-}
-
-//populate database with movies
-async function populateMovies() {
-    try {
-        const movies = await fetchMovies();
-        await insertMovies(movies);
-
-    } catch (err) {
-        console.log(err);
-        throw new Error("error in database")
-    }
-}
-
 module.exports = { authenticate, 
     getUsers, 
     getEmail,
@@ -218,4 +168,4 @@ module.exports = { authenticate,
     deleteUser, 
     updateUsername, 
     insertUserMovies, 
-    populateMovies};
+    };

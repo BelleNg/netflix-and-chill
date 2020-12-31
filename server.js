@@ -5,6 +5,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 require('dotenv').config({path: path.resolve(__dirname+'/.env')});
 const queries = require('./queries');
+const movieQueries = require('./movieQueries');
 require('isomorphic-fetch');
 
 app.use(cors());
@@ -123,9 +124,9 @@ app.post('/users/delete', async (req, res) => {
 })
 
 //GET MOVIES FROM TMDB and Insert into Database
-app.get('/movies', async (req, res) => {
+app.get('/api/movies/:page', async (req, res) => {
     try {
-        await queries.populateMovies();
+        await movieQueries.populateMovies(req.params.page);
         res.status(201).send('Movies queried and inserted to database');
 
     } catch (err) {
