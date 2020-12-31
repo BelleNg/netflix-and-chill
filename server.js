@@ -20,10 +20,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-    const users = await queries.getUsers;
-    res.json({ users });
+    try {
+        const users = await queries.getUsers();
+        res.json({ users });
+    } catch(err) {
+        console.log(err);
+        res.status(500).send();
+    }
     // must use try catch block to get errors when using async await functions
-
 })
 
 // app.post("/magicaltesting", async (req, res) => {
@@ -102,26 +106,27 @@ app.get('/users/:id/matching', async (req, res) => {
     }
 })
 
+//TODO Misc. features.
 // update Username
-app.put('/users/updateUsername', async (req, res) => {
-    try {
-        await queries.updateUsername(req.body.username, req.body.newUsername);
-        res.status(201).send('username changed')
-    } catch(err) {
-        res.status(500).send('username was not changed')
-    }
-})
+// app.put('/users/updateUsername', async (req, res) => {
+//     try {
+//         await queries.updateUsername(req.body.username, req.body.newUsername);
+//         res.status(201).send('username changed')
+//     } catch(err) {
+//         res.status(500).send('username was not changed')
+//     }
+// })
 
-// delete user forever
-// TODO name better rest APIs and check route app.delete
-app.post('/users/delete', async (req, res) => {
-    try {
-        await queries.deleteUser(req.body.email);
-        res.status(201).send('user deleted')
-    } catch(err) {
-        res.status(500).send('user was not created');
-    }
-})
+// // delete user forever
+// // TODO name better rest APIs and check route app.delete
+// app.post('/users/delete', async (req, res) => {
+//     try {
+//         await queries.deleteUser(req.body.email);
+//         res.status(201).send('user deleted')
+//     } catch(err) {
+//         res.status(500).send('user was not created');
+//     }
+// })
 
 //GET MOVIES FROM TMDB and Insert into Database
 app.get('/api/movies/:page', async (req, res) => {
