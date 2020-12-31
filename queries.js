@@ -69,7 +69,7 @@ async function createUser({ username, password, email }) {
     }
 }
 
-// get user from database - works
+// get user from database
 async function getUser(userID) {
     try {
         const user = await User.findOne({ 
@@ -83,8 +83,8 @@ async function getUser(userID) {
         throw new Error("error in database")
     }
 }
-// find movie from database - works
 
+// find movie from database
 async function getMovie(movieId) {
     try {
         const movie = await Movie.findOne({ 
@@ -99,12 +99,11 @@ async function getMovie(movieId) {
     }
 }
 
-// TODO add movie to user list
+// add movie to user list
 async function insertUserMovies(userID, movieNums) {
     // add movie - user connection in users_movies table.
     try {
         const user = await getUser(userID);
-        console.log(user);
         movieNums.map( async (movieId) => {
             let movie =  await getMovie(movieId);
             let output = await user.addMovies(movie);
@@ -118,9 +117,13 @@ async function insertUserMovies(userID, movieNums) {
 }
 
 // get Users by movieIds
-async function getUsersByMovieIds(movieIds) {
+async function getUsersByMovieId(movieId) {
     try {
-        await UserMovie.findAll()
+        const users = await UserMovie.findAll({
+            attributes: ['userId'],
+            where: { movieId: movieId }
+        });
+        return users;
     } catch (err) {
         console.log(err);
         throw new Error("error in database")
@@ -128,44 +131,45 @@ async function getUsersByMovieIds(movieIds) {
 }
 
 // update username
-async function updateUsername(oldUsername, newUsername) {
-    try {
-        await User.update({ username: newUsername},{
-            where: {
-                username: oldUsername
-            }
-        });
-    } catch (err) {
-        console.log(err);
-        throw new Error("error in database")
-    }
-}
+// async function updateUsername(oldUsername, newUsername) {
+//     try {
+//         await User.update({ username: newUsername},{
+//             where: {
+//                 username: oldUsername
+//             }
+//         });
+//     } catch (err) {
+//         console.log(err);
+//         throw new Error("error in database")
+//     }
+// }
 
 // TODO create queries for
 // update email
 // update password
 
 // delete user in Users table
-async function deleteUser(email) {
-    try {
-        await User.destroy({
-            where: { 
-                email: email,
-            }
-        });
-    } catch (err) {
-        console.log(err);
-        throw new Error("error in database")
-    }
-}
+// async function deleteUser(email) {
+//     try {
+//         await User.destroy({
+//             where: { 
+//                 email: email,
+//             }
+//         });
+//     } catch (err) {
+//         console.log(err);
+//         throw new Error("error in database")
+//     }
+// }
 
 module.exports = { authenticate, 
     getUsers, 
     getEmail,
     getMovie,
     getMoviesByUserId,
+    getUsersByMovieId,
     createUser, 
-    deleteUser, 
-    updateUsername, 
+    // deleteUser, 
+    // updateUsername, 
     insertUserMovies, 
     };

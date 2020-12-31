@@ -91,10 +91,11 @@ app.post('/users/:userId/movies', async (req, res) => {
 })
 
 // get users that like same movies
-app.get('/users/:id/matching', async (req, res) => {
+app.get('/users/:movieId/matching', async (req, res) => {
     try {
         // get movies for the user
-        let users = await queries.getUsersByMovieIds();
+        const movieId = parseInt(req.params.movieId);
+        const users = await queries.getUsersByMovieId(movieId);
         if (users) {
             res.send(users);
         } else {
