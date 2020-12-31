@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('./database.js');
-const { User, Movie, Genre } = require('./models');
+const { User, Movie, Genre, UserMovie } = require('./models');
 
 function authenticate() {
     db
@@ -19,6 +19,21 @@ async function getUsers() {
             attributes: ['username', 'password', 'email']
         });
         return users;
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database");
+    }
+}
+
+//get Movies of User
+async function getMoviesByUserId(userId) {
+    try {
+        const movies = await UserMovie.findAll({
+            attributes: ['movieId'],
+            where: { userId: userId }
+        });
+        console.log(movies);
+        return movies;
     } catch (err) {
         console.log(err);
         throw new Error("error in database");
@@ -70,11 +85,11 @@ async function getUser(userID) {
 }
 // find movie from database - works
 
-async function getMovie(movieID) {
+async function getMovie(movieId) {
     try {
         const movie = await Movie.findOne({ 
             where: {
-            id: movieID
+            id: movieId
             }
           });
         return movie;
@@ -90,8 +105,8 @@ async function insertUserMovies(userID, movieNums) {
     try {
         const user = await getUser(userID);
         console.log(user);
-        movieNums.map( async (movieID) => {
-            let movie =  await getMovie(movieID);
+        movieNums.map( async (movieId) => {
+            let movie =  await getMovie(movieId);
             let output = await user.addMovies(movie);
             console.log("this is userMovies", output)
         });
@@ -100,6 +115,16 @@ async function insertUserMovies(userID, movieNums) {
         throw new Error("error in database")
     }
 
+}
+
+// get Users by movieIds
+async function getUsersByMovieIds(movieIds) {
+    try {
+        await UserMovie.findAll()
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database")
+    }
 }
 
 // update username
@@ -188,6 +213,7 @@ module.exports = { authenticate,
     getUsers, 
     getEmail,
     getMovie,
+    getMoviesByUserId,
     createUser, 
     deleteUser, 
     updateUsername, 

@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-    const users = await queries.getUsers();
+    const users = await queries.getUsers;
     res.json({ users });
     // must use try catch block to get errors when using async await functions
 
@@ -74,14 +74,30 @@ app.post('/users/signup', async (req, res) => {
     }
 })
 
-// TODO change movie arrays to take from req.body
-app.post('/users/:userid/movies', async (req, res) => {
+//add movies to user
+app.post('/users/:userId/movies', async (req, res) => {
     try {
         // add movies to users 
-        await queries.insertUserMovies(req.body.userID, [590995, 682377]);
+        await queries.insertUserMovies(req.body.userID, req.body.movies);
         res.status(201).send('user movie list successfully updated');
     } catch(err) {
         res.status(500).send('movies not added to user');
+    }
+})
+
+// get users that like same movies
+app.get('/users/:id/matching', async (req, res) => {
+    try {
+        // get movies for the user
+        let users = await queries.getUsersByMovieIds();
+        if (users) {
+            res.send(users);
+        } else {
+            res.send('No users found')
+        }
+    } catch(err) {
+        console.log(err);
+        res.status(500).send('Could not get users');
     }
 })
 
