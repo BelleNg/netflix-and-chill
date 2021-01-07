@@ -1,5 +1,5 @@
 # Untrack folders
 
-node_modules/
+MMM Backend/node_modules/
 .env
-devSeed.js
+MMM Backend/devSeed.js
