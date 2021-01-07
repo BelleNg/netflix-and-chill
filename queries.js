@@ -24,6 +24,17 @@ async function getUsers() {
         throw new Error("error in database");
     }
 }
+async function getAllMovies() {
+    try {
+        const movies = await Movie.findAll({
+            attributes: ['id', 'title', 'genre_ids', 'overview', 'release_date', 'poster_path']
+        });
+        return movies;
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database");
+    }
+}
 
 //get Movies of User
 async function getMoviesByUserId(userId) {
@@ -163,7 +174,8 @@ async function getUsersByMovieId(movieId) {
 // }
 
 module.exports = { authenticate, 
-    getUsers, 
+    getUsers,
+    getAllMovies,
     getEmail,
     getMovie,
     getMoviesByUserId,

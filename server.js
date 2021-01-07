@@ -30,6 +30,16 @@ app.get('/users', async (req, res) => {
     // must use try catch block to get errors when using async await functions
 })
 
+app.get('/movies', async (req, res) => {
+    try {
+        const movies = await queries.getAllMovies();
+        res.json({ movies });
+    } catch(err) {
+        console.log(err);
+        res.status(500).send();
+    }
+})
+
 // app.post("/magicaltesting", async (req, res) => {
 //     try {
 //         const movie = await queries.getMovie(req.body.movieID);
