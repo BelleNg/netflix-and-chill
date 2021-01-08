@@ -17,7 +17,7 @@ function authenticate() {
 async function getUsers() {
     try {
         const users = await User.findAll({
-            attributes: ['username', 'password', 'email']
+            attributes: ['id','username', 'password', 'email']
         });
         return users;
     } catch (err) {

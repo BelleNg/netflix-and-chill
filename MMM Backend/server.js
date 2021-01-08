@@ -96,6 +96,22 @@ app.post('/users/signup', async (req, res) => {
     }
 })
 
+//get user movies list
+app.get('/users/:userId/movies', async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId);
+        const moviesArr = await queries.getMoviesByUserId(userId);
+        const movies = moviesArr.reduce( (acc, movie) => {
+            return { ...acc, [movie.movieId]: movie }
+        }, {})
+        res.json({ movies });
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).send('Could not get users');
+    }
+})
+
 //add movies to user
 app.post('/users/:userId/movies', async (req, res) => {
     try {
