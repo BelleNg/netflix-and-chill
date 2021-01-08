@@ -32,7 +32,10 @@ app.get('/users', async (req, res) => {
 
 app.get('/movies', async (req, res) => {
     try {
-        const movies = await queries.getAllMovies();
+        const moviesArray = await queries.getAllMovies(); // array of movie objes
+        const movies = moviesArray.reduce( (acc, movie) => {
+            return { ...acc, [movie.id]: movie };
+        }, {});
         res.json({ movies });
     } catch(err) {
         console.log(err);
