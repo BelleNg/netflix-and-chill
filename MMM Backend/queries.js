@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { Op } = require("sequelize");
 const db = require('./database.js');
 const { User, Movie, Genre, UserMovie } = require('./models');
 
@@ -127,7 +128,26 @@ async function insertUserMovies(userID, movieNums) {
 
 }
 
-// get Users by movieIds
+//get Users by list of movies
+async function getUsersByMovies() {
+    try {
+        const movies = await UserMovie.findAll({
+            attributes: ['userId'],
+            where: {
+                [Op.or]: [
+                  { movieId: 554585 },
+                  { movieId: 602211 }
+                ]
+            }
+        })
+        return movies;
+    } catch (err) {
+        console.log(err);
+        throw new Error("error in database");
+    }
+}
+
+// get Users by one movieId
 async function getUsersByMovieId(movieId) {
     try {
         const users = await UserMovie.findAll({
@@ -179,6 +199,7 @@ module.exports = { authenticate,
     getEmail,
     getMovie,
     getMoviesByUserId,
+    getUsersByMovies,
     getUsersByMovieId,
     createUser, 
     // deleteUser, 

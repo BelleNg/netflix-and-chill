@@ -21,7 +21,10 @@ app.get('/', (req, res) => {
 
 app.get('/users', async (req, res) => {
     try {
-        const users = await queries.getUsers();
+        const usersArray = await queries.getUsers();
+        const users = usersArray.reduce( (acc, user) => {
+            return { ...acc, [user.email]: user }
+        },{});
         res.json({ users });
     } catch(err) {
         console.log(err);
@@ -43,15 +46,16 @@ app.get('/movies', async (req, res) => {
     }
 })
 
-// app.post("/magicaltesting", async (req, res) => {
-//     try {
-//         const movie = await queries.getMovie(req.body.movieID);
-//         console.log("this is movie",movie);
-//         res.send(movie);
-//     } catch (err) {
-//         res.status(500).send('error on test', err)
-//     }
-// })
+app.get("/magicaltesting", async (req, res) => {
+    try {
+        // const movie = await queries.getMovie(req.body.movieID);
+        const users = await queries.getUsersByMovies();
+        console.log("this is movie",users);
+        res.send(users);
+    } catch (err) {
+        res.status(500).send('error on test', err)
+    }
+})
 
 
 // user login
