@@ -105,7 +105,6 @@ app.get('/users/:userId/movies', async (req, res) => {
             return { ...acc, [movie.movieId]: movie }
         }, {})
         res.json({ movies });
-
     } catch(err) {
         console.log(err);
         res.status(500).send('Could not get users');
@@ -116,7 +115,7 @@ app.get('/users/:userId/movies', async (req, res) => {
 app.post('/users/:userId/movies', async (req, res) => {
     try {
         // add movies to users 
-        await queries.insertUserMovies(req.body.userID, req.body.movies);
+        await queries.insertUserMovies(req.body.userId, req.body.movies);
         res.status(201).send('user movie list successfully updated');
     } catch(err) {
         res.status(500).send('movies not added to user');
